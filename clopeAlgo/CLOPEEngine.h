@@ -8,9 +8,9 @@ class IDataReader;
 class CLOPEEngine
 {
 public:
-	CLOPEEngine();
+	CLOPEEngine() {};
 
-	~CLOPEEngine();
+	~CLOPEEngine() {};
 
 	bool Initialize(const char* i_fileName);
 

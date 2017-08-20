@@ -1,9 +1,10 @@
 #include "stdafx.h"
-#include <iostream>
 
 bool CLOPEEngine::Initialize(const char* i_fileName)
 {
 	fopen_s(&m_inputStream, i_fileName, "r");
+
+	return m_inputStream ? true : false;
 }
 
 void CLOPEEngine::StartClusterization()
@@ -21,7 +22,7 @@ void CLOPEEngine::StartClusterization()
 
 bool CLOPEEngine::iterateAllTransactions(bool i_isFirstIteration)
 {
-
+	return false;
 }
 
 void CLOPEEngine::Finalize()
