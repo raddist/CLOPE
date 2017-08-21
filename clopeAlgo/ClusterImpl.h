@@ -1,11 +1,17 @@
 #pragma once
 
+class CTransaction;
+
 class CCluster
 {
 public:
 	CCluster() {};
 
 	~CCluster() {};
+
+   void AddTransaction(CTransaction i_transactionToAdd);
+
+   void RemoveTransaction(CTransaction i_transactionToRemove);
 
 	int* Occ;
 
