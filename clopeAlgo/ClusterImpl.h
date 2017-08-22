@@ -9,9 +9,9 @@ public:
 
 	~CCluster() {};
 
-   void AddTransaction(CTransaction i_transactionToAdd);
+	void AddTransaction(CTransaction i_transactionToAdd);
 
-   void RemoveTransaction(CTransaction i_transactionToRemove);
+	void RemoveTransaction(CTransaction i_transactionToRemove);
 
 	int* Occ;
 

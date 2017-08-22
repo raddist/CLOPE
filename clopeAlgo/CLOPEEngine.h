@@ -22,8 +22,15 @@ private:
 	/// @return true if algorithm has finished work
 	bool iterateAllTransactions(bool i_isFirstIteration);
 
+	double findMaxDelta(int o_bestCluster, int I_exceptCluster);
+
+	void removeEmptyClusters();
+
 private:
 	std::vector<CCluster> m_clusters;
+	double m_profit = 0;
 
 	IODataStreamer* m_transactionStreamer;
+
+	double m_R;
 };

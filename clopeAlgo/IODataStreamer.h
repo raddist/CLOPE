@@ -1,14 +1,16 @@
 #pragma once
 
-class IDataStream
+class IODataStreamer
 {
-   virtual void OpenStream();
+public:
+	virtual void OpenStream() {};
 
-   virtual void CloseStream();
+	virtual void CloseStream() {};
 
-   virtual bool ReadTransaction(CTransaction& i_transaction);
+	virtual bool ReadTransaction(CTransaction& i_transaction, bool i_isCINneeded)
+	{
+		return true;
+	}
 
-   virtual void ReadTransactionWithCIN();
-
-   virtual void AppendCINToTransaction(int i_CIN);
-}
+	virtual void AppendCINToTransaction(int i_CIN) {};
+};
