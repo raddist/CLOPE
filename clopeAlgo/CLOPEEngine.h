@@ -3,7 +3,7 @@
 #include <vector>
 
 class CCluster;
-class IDataReader;
+class IODataStreamer;
 
 class CLOPEEngine
 {
@@ -25,7 +25,5 @@ private:
 private:
 	std::vector<CCluster> m_clusters;
 
-	IDataReader* m_transactionReader;
-
-	FILE* m_inputStream;
+	IODataStreamer* m_transactionStreamer;
 };

@@ -8,4 +8,5 @@
 
 #include "CLOPEEngine.h"
 #include "ClusterImpl.h"
-#include "transactionImpl.h" 
+#include "transactionImpl.h"
+#include "IODataStreamer.h"
