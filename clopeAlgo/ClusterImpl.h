@@ -5,9 +5,11 @@ class CTransaction;
 class CCluster
 {
 public:
-	CCluster() {};
+	CCluster();
 
-	~CCluster() {};
+	~CCluster();
+
+	double DeltaAdd(CTransaction i_transaction, double i_rep);
 
 	void AddTransaction(CTransaction i_transactionToAdd);
 

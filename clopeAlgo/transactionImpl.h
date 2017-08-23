@@ -3,7 +3,9 @@
 class CTransaction
 {
 public:
-	CTransaction() {};
+	CTransaction () 
+	: m_clusterOwner(-1)
+	{};
 
 	CTransaction(int* i_startPtr, int i_size);
 

@@ -13,4 +13,6 @@ public:
 	}
 
 	virtual void AppendCINToTransaction(int i_CIN) {};
+
+	virtual void RemoveCINFromFile() {};
 };

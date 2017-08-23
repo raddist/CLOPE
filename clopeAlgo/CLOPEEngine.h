@@ -22,7 +22,7 @@ private:
 	/// @return true if algorithm has finished work
 	bool iterateAllTransactions(bool i_isFirstIteration);
 
-	double findMaxDelta(int o_bestCluster, int I_exceptCluster);
+	double findMaxDelta(CTransaction i_transaction, int o_bestCluster);
 
 	void removeEmptyClusters();
 

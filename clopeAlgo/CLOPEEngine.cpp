@@ -20,6 +20,9 @@ void CLOPEEngine::StartClusterization()
 		}
 		firstIteration = false;
 	}
+
+	removeEmptyClusters();
+	m_transactionStreamer->RemoveCINFromFile();
 }
 
 bool CLOPEEngine::iterateAllTransactions(bool i_isFirstIteration)
@@ -48,17 +51,38 @@ bool CLOPEEngine::iterateAllTransactions(bool i_isFirstIteration)
 	   }
    }
 
-   removeEmptyClusters();
 	return false;
 }
 
-double CLOPEEngine::findMaxDelta(int o_bestCluster, int i_exceptCluster)
+double CLOPEEngine::findMaxDelta(CTransaction i_transaction, int  o_bestCluster)
 {
+	int index = 0;
+	double bestDelta;
 	o_bestCluster = 0;
-	return 0.0;
+
+	for (CCluster cluster : m_clusters)
+	{
+		double delta = cluster.DeltaAdd(i_transaction, m_R);
+		if (i_transaction.m_clusterOwner != index &&
+			delta > bestDelta)
+		{
+			bestDelta = delta;
+		}
+	}
+
+	return bestDelta;
 }
 
-void CLOPEEngine::removeEmptyClusters() {};
+void CLOPEEngine::removeEmptyClusters()
+{
+	for (auto it = m_clusters.begin(); it != m_clusters.end(); ++it)
+	{
+		if (it->m_transactionCounter == 0)
+		{
+			m_clusters.erase(it);
+		}
+	}
+};
 
 void CLOPEEngine::Finalize()
 {
