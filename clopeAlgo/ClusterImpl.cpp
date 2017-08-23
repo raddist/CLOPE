@@ -5,6 +5,7 @@ CCluster::CCluster() {};
 
 CCluster::~CCluster() {};
 
+///////////////////////////////////////////////////////////////////////////////////////////
 double CCluster::DeltaAdd(CTransaction i_transaction, double i_rep)
 {
 	int newSq = m_s + i_transaction.m_sq;
@@ -22,6 +23,25 @@ double CCluster::DeltaAdd(CTransaction i_transaction, double i_rep)
 		- m_s * m_transactionCounter / pow(m_width, i_rep);
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////
+double CCluster::DeltaRemove(CTransaction i_transaction, double i_rep)
+{
+	int newSq = m_s - i_transaction.m_sq;
+
+	int newWidth = m_width;
+	for (int i = 0; i < i_transaction.m_len; ++i)
+	{
+		if (Occ[i_transaction.m_objects[i]] - i_transaction.m_objects[i + i_transaction.m_len] == 0)
+		{
+			newWidth -= 1;
+		}
+	}
+
+	return m_s * m_transactionCounter / pow(m_width, i_rep)
+		- newSq * (m_transactionCounter + 1) / pow(newWidth, i_rep);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
 void CCluster::AddTransaction(CTransaction i_transactionToAdd)
 {
 	int deltaWidth = 0;
@@ -50,6 +70,7 @@ void CCluster::AddTransaction(CTransaction i_transactionToAdd)
 	m_transactionCounter++;
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////
 void CCluster::RemoveTransaction(CTransaction i_transactionToRemove)
 {
 	int deltaWidth = 0;

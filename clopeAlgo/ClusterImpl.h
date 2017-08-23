@@ -11,6 +11,8 @@ public:
 
 	double DeltaAdd(CTransaction i_transaction, double i_rep);
 
+	double DeltaRemove(CTransaction i_transaction, double i_rep);
+
 	void AddTransaction(CTransaction i_transactionToAdd);
 
 	void RemoveTransaction(CTransaction i_transactionToRemove);

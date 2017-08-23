@@ -3,6 +3,7 @@
 #include <vector>
 
 class CCluster;
+class CTransaction;
 class IODataStreamer;
 
 class CLOPEEngine
@@ -19,8 +20,11 @@ public:
 	void Finalize();
 
 private:
+
+	void doFirstIteration();
+
 	/// @return true if algorithm has finished work
-	bool iterateAllTransactions(bool i_isFirstIteration);
+	bool iterateAllTransactions();
 
 	double findMaxDelta(CTransaction i_transaction, int o_bestCluster);
 
@@ -28,7 +32,9 @@ private:
 
 private:
 	std::vector<CCluster> m_clusters;
+
 	double m_profit = 0;
+	unsigned long m_transactionCounter = 0;
 
 	IODataStreamer* m_transactionStreamer;
 
