@@ -11,6 +11,8 @@ public:
 
 	~CTransaction();
 
+	void FillTransaction(int* i_startPtr, int i_size);
+
 	int* m_objects;
 
 	int m_len;

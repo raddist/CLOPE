@@ -1,10 +1,16 @@
 #include "stdafx.h"
+
 #include <math.h>
 #include <algorithm>
+#include <cstring>
+#include "test42.h"
 
 bool CLOPEEngine::Initialize(const char* i_fileName)
 {
-	//fopen_s(&m_inputStream, i_fileName, "r");
+	if (!strcmp(i_fileName, "42"))
+	{
+		m_transactionStreamer = new TestStreamer();
+	}
 
 	//return m_inputStream ? true : false;
 	return true;
@@ -41,7 +47,7 @@ void CLOPEEngine::doFirstIteration()
 
 		if (deltaNew > foundDelta)
 		{
-			m_clusters.emplace_back();
+			m_clusters.emplace_back( CCluster(m_transactionStreamer->ReplyAmountOfDifferentArgs()) );
 			m_profit = (m_profit * m_transactionCounter + deltaNew)
 				/ static_cast<double>(m_transactionCounter + 1);
 			m_transactionStreamer->AppendCINToTransaction(static_cast<int>(m_clusters.size()) - 1);
@@ -80,7 +86,7 @@ bool CLOPEEngine::iterateAllTransactions()
 	   isAnyTransactionMoved = true;
 	   if (deltaNew > foundDelta)
 	   {
-		   m_clusters.emplace_back();
+		   m_clusters.emplace_back( CCluster(m_transactionStreamer->ReplyAmountOfDifferentArgs()) );
 		   m_profit += deltaNew;
 		   m_transactionStreamer->AppendCINToTransaction(static_cast<int>(m_clusters.size()) - 1);
 	   }

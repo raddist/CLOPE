@@ -1,15 +1,28 @@
 #include "stdafx.h"
 #include <math.h>
 
-CCluster::CCluster() {};
+CCluster::CCluster(int objAmount)
+: m_width( 0 )
+, m_s( 0 )
+, m_transactionCounter( 0 )
+{
+	Occ = new int[objAmount];
+	for (int i = 0; i < objAmount; ++i)
+	{
+		Occ[i] = 0;
+	}
+};
 
-CCluster::~CCluster() {};
+///////////////////////////////////////////////////////////////////////////////////////////
+CCluster::~CCluster()
+{
+	delete[] Occ;
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 double CCluster::DeltaAdd(CTransaction i_transaction, double i_rep)
 {
 	int newSq = m_s + i_transaction.m_sq;
-
 	int newWidth = m_width;
 	for (int i = 0; i < i_transaction.m_len; ++i)
 	{
@@ -27,7 +40,6 @@ double CCluster::DeltaAdd(CTransaction i_transaction, double i_rep)
 double CCluster::DeltaRemove(CTransaction i_transaction, double i_rep)
 {
 	int newSq = m_s - i_transaction.m_sq;
-
 	int newWidth = m_width;
 	for (int i = 0; i < i_transaction.m_len; ++i)
 	{
@@ -53,7 +65,6 @@ void CCluster::AddTransaction(CTransaction i_transactionToAdd)
 		{
 			deltaWidth += 1;
 		}
-
 		Occ[i_transactionToAdd.m_objects[i]] += i_transactionToAdd.m_objects[i + i_transactionToAdd.m_len];
 	}
 
@@ -62,9 +73,6 @@ void CCluster::AddTransaction(CTransaction i_transactionToAdd)
 
 	// change sq
 	m_s += i_transactionToAdd.m_sq;
-
-	// change height
-	m_h = m_s / m_width;
 
 	// change numver of containing transactions
 	m_transactionCounter++;
@@ -78,7 +86,6 @@ void CCluster::RemoveTransaction(CTransaction i_transactionToRemove)
 	for (int i = 0; i < i_transactionToRemove.m_len; ++i)
 	{
 		Occ[i_transactionToRemove.m_objects[i]] -= i_transactionToRemove.m_objects[i + i_transactionToRemove.m_len];
-
 		if (Occ[i_transactionToRemove.m_objects[i]] == 0)
 		{
 			deltaWidth -= 1;
@@ -90,9 +97,6 @@ void CCluster::RemoveTransaction(CTransaction i_transactionToRemove)
 
 	// change sq
 	m_s -= i_transactionToRemove.m_sq;
-
-	// change height
-	m_h = m_s / m_width;
 
 	// change numver of containing transactions
 	m_transactionCounter--;
