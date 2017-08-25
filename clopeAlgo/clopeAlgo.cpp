@@ -7,6 +7,8 @@ int main(int* argc, char* argv[])
 
 	engine->Initialize(argv[1]);
 
+	engine->StartClusterization();
+
     return 0;
 }
 

@@ -26,7 +26,7 @@ private:
 	/// @return true if algorithm has finished work
 	bool iterateAllTransactions();
 
-	double findMaxDelta(CTransaction i_transaction, int o_bestCluster);
+	double findMaxDelta(const CTransaction& i_transaction, int& o_bestCluster, int exceptCluster = -1);
 
 	void removeEmptyClusters();
 

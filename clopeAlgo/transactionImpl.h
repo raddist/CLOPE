@@ -17,7 +17,5 @@ public:
 
 	int m_len;
 
-	int m_sq;
-
 	int m_clusterOwner;
 };

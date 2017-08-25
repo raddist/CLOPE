@@ -23,12 +23,13 @@ namespace
 	std::vector<int> transactionClusters;
 }
 
-class TestStreamer : IODataStreamer
+class TestStreamer : public IODataStreamer
 {
+public:
 	TestStreamer()
-	: m_ptr( 0 )
+	: m_ptr( -1 )
 	{
-		transactionClusters.resize(transactions.size());
+		transactionClusters.assign(transactions.size(), -1);
 	};
 
 	~TestStreamer() {};
@@ -37,24 +38,38 @@ class TestStreamer : IODataStreamer
 
 	virtual void CloseStream() {};
 
-	virtual bool ReadTransaction(CTransaction& i_transaction, bool i_isCINneeded)
+	virtual bool ReadTransaction(CTransaction& o_transaction)
 	{
+		++m_ptr;
 		if (m_ptr < transactions.size())
 		{
-			i_transaction.FillTransaction(transactions[m_ptr].first, transactions[m_ptr].second);
+			o_transaction.FillTransaction(transactions[m_ptr].first, transactions[m_ptr].second);
+			o_transaction.m_clusterOwner = transactionClusters[m_ptr];
 			return true;
 		}
+
 		return false;
 	}
 
 	virtual void AppendCINToTransaction(int i_CIN)
 	{
-
+		transactionClusters[m_ptr] = i_CIN;
 	}
 
-	virtual void RemoveCINFromFile() ;
+	virtual void goToTheStreamStart()
+	{
+		m_ptr = -1;
+	}
 
-	virtual int ReplyAmountOfDifferentArgs() ;
+	virtual void RemoveCINFromFile()
+	{
+		transactionClusters.clear();
+	}
+
+	virtual int ReplyAmountOfDifferentArgs()
+	{
+		return 6;
+	}
 
 	int m_ptr;
 };
