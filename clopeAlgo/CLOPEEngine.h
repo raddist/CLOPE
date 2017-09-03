@@ -17,6 +17,8 @@ public:
 
 	void StartClusterization();
 
+	void ShowDistributionByParam(int i_paramumber, int* o_distr);
+
 	void Finalize();
 
 private:

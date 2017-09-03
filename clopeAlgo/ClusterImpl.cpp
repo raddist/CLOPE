@@ -23,8 +23,7 @@ void CCluster::operator=(const CCluster& i_other)
 	Occ = new int[m_occMaxSize];
 	for (int i = 0; i < m_occMaxSize; ++i)
 	{
-		int t = i_other.Occ[i];
-		Occ[i] = t;
+		Occ[i] = i_other.Occ[i];
 	}
 
 	m_width = i_other.m_width;
@@ -44,8 +43,7 @@ CCluster::CCluster(const CCluster& i_other)
 	Occ = new int[m_occMaxSize];
 	for (int i = 0; i < m_occMaxSize; ++i)
 	{
-		int t = i_other.Occ[i];
-		Occ[i] = t;
+		Occ[i] = i_other.Occ[i];
 	}
 
 	m_width = i_other.m_width;

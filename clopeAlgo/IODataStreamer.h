@@ -16,4 +16,6 @@ public:
 	virtual void RemoveCINFromFile() = 0;
 
 	virtual int ReplyAmountOfDifferentArgs() = 0;
+
+	virtual int* ReplyParamInformation(int i_param, int& o_size) = 0;
 };

@@ -6,6 +6,8 @@
 #include "test42.h"
 #include "txtStreamer.h"
 
+#pragma warning( disable: 4700)
+
 CLOPEEngine::CLOPEEngine(char* i_fileName, double i_r)
 {
 	if (!strcmp(i_fileName, "42"))
@@ -40,6 +42,31 @@ void CLOPEEngine::StartClusterization()
 
 	removeEmptyClusters();
 	m_transactionStreamer->RemoveCINFromFile();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+void CLOPEEngine::Finalize()
+{
+	m_transactionStreamer->CloseStream();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+void CLOPEEngine::ShowDistributionByParam(int i_paramNumber, int* o_distr)
+{
+	int objSize = 0;
+	int* objs = m_transactionStreamer->ReplyParamInformation(i_paramNumber, objSize);
+
+	o_distr = new int[m_clusters.size() * (objSize + 1)];
+	for (int i = 0; i < m_clusters.size(); ++i)
+	{
+		int numberOfTransactions = m_clusters[i].m_transactionCounter;
+		for (int j = 0; j < objSize + 1; ++j)
+		{
+			o_distr[(objSize+1) * i + j] = m_clusters[i].Occ[objs[j]];
+			numberOfTransactions -= o_distr[objSize * i + j];
+		}
+		o_distr[(objSize + 1) * i + objSize] = numberOfTransactions;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -138,9 +165,3 @@ void CLOPEEngine::removeEmptyClusters()
 		}
 	}
 };
-
-///////////////////////////////////////////////////////////////////////////////////////////
-void CLOPEEngine::Finalize()
-{
-	m_transactionStreamer->CloseStream();
-}

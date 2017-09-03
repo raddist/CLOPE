@@ -127,6 +127,20 @@ public:
 		return 6;
 	}
 
+	virtual int* ReplyParamInformation(int i_param, int& o_size)
+	{
+		if (i_param == 1)
+		{
+			o_size = 2;
+
+			int* o_obj = new int[o_size];
+			o_obj[0] = 0;
+			o_obj[1] = 4;
+
+			return o_obj;
+		}
+	}
+
 	void makeCinFileNames(std::string i_baseName)
 	{
 		m_cinFileName1 = i_baseName + "CIN1.txt";

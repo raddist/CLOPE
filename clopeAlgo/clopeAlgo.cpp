@@ -11,6 +11,9 @@ int main(int* argc, char* argv[])
 
 	engine->Finalize();
 
+	int* etemp = NULL;
+	engine->ShowDistributionByParam(1, etemp);
+
 	delete engine;
 
     return 0;

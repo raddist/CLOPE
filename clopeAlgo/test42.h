@@ -73,5 +73,7 @@ public:
 		return 6;
 	}
 
+	virtual int* ReplyParamInformation(int i_param, int& o_size) { return NULL; };
+
 	int m_ptr;
 };
