@@ -3,9 +3,9 @@
 class IODataStreamer
 {
 public:
-	virtual void OpenStream() = 0;
+	virtual bool OpenStream() = 0;
 
-	virtual void CloseStream() = 0;
+	virtual bool CloseStream() = 0;
 
 	virtual bool ReadTransaction(CTransaction& i_transaction) = 0;
 

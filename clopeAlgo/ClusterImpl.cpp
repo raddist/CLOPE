@@ -5,17 +5,60 @@ CCluster::CCluster(int objAmount)
 : m_width( 0 )
 , m_s( 0 )
 , m_transactionCounter( 0 )
+, m_occMaxSize( objAmount )
 {
 	Occ = new int[objAmount];
-	for (int i = 0; i < objAmount; ++i)
+	std::cout << "new" << std::endl;
+	for (int i = 0; i < m_occMaxSize; ++i)
 	{
 		Occ[i] = 0;
 	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
+void CCluster::operator=(const CCluster& i_other)
+{
+	m_occMaxSize = i_other.m_occMaxSize;
+
+	Occ = new int[m_occMaxSize];
+	for (int i = 0; i < m_occMaxSize; ++i)
+	{
+		int t = i_other.Occ[i];
+		Occ[i] = t;
+	}
+
+	m_width = i_other.m_width;
+
+	m_s = i_other.m_s;
+
+	m_transactionCounter = i_other.m_transactionCounter;
+
+	m_occMaxSize = i_other.m_occMaxSize;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+CCluster::CCluster(const CCluster& i_other)
+{
+	m_occMaxSize = i_other.m_occMaxSize;
+
+	Occ = new int[m_occMaxSize];
+	for (int i = 0; i < m_occMaxSize; ++i)
+	{
+		int t = i_other.Occ[i];
+		Occ[i] = t;
+	}
+
+	m_width = i_other.m_width;
+
+	m_s = i_other.m_s;
+
+	m_transactionCounter = i_other.m_transactionCounter;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
 CCluster::~CCluster()
 {
+	std::cout << "release" << std::endl;
 	delete[] Occ;
 };
 
@@ -26,6 +69,8 @@ double CCluster::DeltaAdd(const CTransaction& i_transaction, double i_rep)
 	int newWidth = m_width;
 	for (int i = 0; i < i_transaction.m_len; ++i)
 	{
+		int t1 = i_transaction.m_objects[i];
+		int t = Occ[i_transaction.m_objects[i]];
 		if (Occ[i_transaction.m_objects[i]] == 0)
 		{
 			newWidth += 1;
@@ -47,6 +92,11 @@ double CCluster::DeltaRemove(const CTransaction& i_transaction, double i_rep)
 		{
 			newWidth -= 1;
 		}
+	}
+
+	if (newWidth == 0)
+	{
+		return m_s * m_transactionCounter / pow(m_width, i_rep);
 	}
 
 	return m_s * m_transactionCounter / pow(m_width, i_rep)

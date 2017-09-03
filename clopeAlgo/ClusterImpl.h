@@ -8,6 +8,12 @@ public:
 	// @brief default ctor
 	CCluster(int objAmount);
 
+	// @brief assignment ctor
+	void CCluster::operator=(const CCluster& i_other);
+
+	// copy and assignment prohibited
+	CCluster(const CCluster&);
+
 	// @brief default dtor
 	~CCluster();
 
@@ -38,4 +44,6 @@ public:
 	int m_s;	//< accumulated number of all objects
 
 	int m_transactionCounter;	//< count number of transaction containing in this cluster
+
+	int m_occMaxSize;	//< used for copy constructor
 };

@@ -9,11 +9,11 @@ class IODataStreamer;
 class CLOPEEngine
 {
 public:
-	CLOPEEngine() {};
+	CLOPEEngine(char* i_fileName, double i_r);
 
 	~CLOPEEngine() {};
 
-	bool Initialize(const char* i_fileName);
+	bool Initialize();
 
 	void StartClusterization();
 

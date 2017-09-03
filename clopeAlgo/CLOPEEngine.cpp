@@ -4,8 +4,9 @@
 #include <algorithm>
 #include <cstring>
 #include "test42.h"
+#include "txtStreamer.h"
 
-bool CLOPEEngine::Initialize(const char* i_fileName)
+CLOPEEngine::CLOPEEngine(char* i_fileName, double i_r)
 {
 	if (!strcmp(i_fileName, "42"))
 	{
@@ -13,8 +14,14 @@ bool CLOPEEngine::Initialize(const char* i_fileName)
 		m_R = 2.0;
 	}
 
-	//return m_inputStream ? true : false;
-	return true;
+	m_transactionStreamer = new TxtStreamer(i_fileName);
+	m_R = i_r;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+bool CLOPEEngine::Initialize()
+{
+	return m_transactionStreamer->OpenStream();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -49,7 +56,7 @@ void CLOPEEngine::doFirstIteration()
 
 		if (deltaNew > foundDelta)
 		{
-			m_clusters.emplace_back(m_transactionStreamer->ReplyAmountOfDifferentArgs());
+			m_clusters.emplace_back( m_transactionStreamer->ReplyAmountOfDifferentArgs());
 			indexOfClusterToAddIn = static_cast<int>(m_clusters.size() - 1);
 		}
 
@@ -135,8 +142,5 @@ void CLOPEEngine::removeEmptyClusters()
 ///////////////////////////////////////////////////////////////////////////////////////////
 void CLOPEEngine::Finalize()
 {
-   /*if (m_inputStream)
-   {
-   fclose(m_inputStream);
-   }*/
+	m_transactionStreamer->CloseStream();
 }

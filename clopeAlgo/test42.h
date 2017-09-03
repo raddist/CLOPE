@@ -27,24 +27,24 @@ class TestStreamer : public IODataStreamer
 {
 public:
 	TestStreamer()
-	: m_ptr( -1 )
+	: m_ptr( 0 )
 	{
 		transactionClusters.assign(transactions.size(), -1);
 	};
 
 	~TestStreamer() {};
 
-	virtual void OpenStream() {};
+	virtual bool OpenStream() { return true; };
 
-	virtual void CloseStream() {};
+	virtual bool CloseStream() { return true;  };
 
 	virtual bool ReadTransaction(CTransaction& o_transaction)
 	{
-		++m_ptr;
-		if (m_ptr < transactions.size())
+		if (m_ptr < static_cast<int>(transactions.size()))
 		{
 			o_transaction.FillTransaction(transactions[m_ptr].first, transactions[m_ptr].second);
 			o_transaction.m_clusterOwner = transactionClusters[m_ptr];
+			++m_ptr;
 			return true;
 		}
 
@@ -53,12 +53,14 @@ public:
 
 	virtual void AppendCINToTransaction(int i_CIN)
 	{
-		transactionClusters[m_ptr] = i_CIN;
+		// we have already incremented m_ptr
+		// so use previous one
+		transactionClusters[m_ptr - 1] = i_CIN;
 	}
 
 	virtual void goToTheStreamStart()
 	{
-		m_ptr = -1;
+		m_ptr = 0;
 	}
 
 	virtual void RemoveCINFromFile()
