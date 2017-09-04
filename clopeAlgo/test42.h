@@ -73,9 +73,9 @@ public:
 		return 6;
 	}
 
-	virtual std::map<std::string, int> ReplyParamInformation(int i_param) 
+	virtual std::map<char, int> ReplyParamInformation(int i_param) 
 	{  
-		std::map<std::string, int> res;
+		std::map<char, int> res;
 		return res;
 	};
 

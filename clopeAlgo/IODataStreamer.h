@@ -19,5 +19,5 @@ public:
 
 	virtual int ReplyAmountOfDifferentArgs() = 0;
 
-	virtual std::map<std::string, int> ReplyParamInformation(int i_param) = 0;
+	virtual std::map<char, int> ReplyParamInformation(int i_param) = 0;
 };

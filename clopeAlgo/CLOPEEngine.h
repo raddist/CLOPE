@@ -6,6 +6,13 @@ class CCluster;
 class CTransaction;
 class IODataStreamer;
 
+typedef struct EDistributionInfo {
+	std::vector<std::string> names;
+	std::vector<int> distribution;
+	int rows;
+	int cols;
+};
+
 class CLOPEEngine
 {
 public:
@@ -17,7 +24,7 @@ public:
 
 	void StartClusterization();
 
-   int* ShowDistributionByParam(int i_paramNumber, int& rows, int& cols);
+   EDistributionInfo ShowDistributionByParam(int i_paramNumber);
 
 	void Finalize();
 

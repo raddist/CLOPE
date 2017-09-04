@@ -4,29 +4,27 @@
 
 namespace
 {
-   bool ShowResults(char* i_resFileName, int* res, int rows, int cols)
+   bool ShowResults(char* i_resFileName, EDistributionInfo info)
    {
       std::ofstream out(i_resFileName, std::ios::out | std::ios::trunc);
 
-      int ind = 1;
-
       std::string strRow("Cluster\t");
-      for (int i = 0; i < cols - 1; ++i)
+      for (int i = 0; i < info.cols - 1; ++i)
       {
-         strRow = strRow + std::to_string(res[i]) + "\t";
+         strRow = strRow + info.names[i] + "\t";
       }
       strRow += "W/o param\n";
 
       out << strRow;
       strRow.clear();
 
-      for (int i = 1; i < rows; ++i)
+      for (int i = 0; i < info.rows; ++i)
       {
          strRow = std::to_string(i) + "\t";
 
-         for (int j = 0; j < cols; ++j)
+         for (int j = 0; j < info.cols; ++j)
          {
-            strRow = strRow + std::to_string(res[i * cols + j]) + "\t";
+            strRow = strRow + std::to_string(info.distribution[info.cols * i + j]) + "\t";
          }
          out << strRow <<"\n";
          strRow.clear();
@@ -48,12 +46,10 @@ int main(int* argc, char* argv[])
 
 	engine->Finalize();
 
-	int* etemp = NULL;
-   int rows = 0;
-   int cols = 0;
-	etemp = engine->ShowDistributionByParam(1, rows, cols);
+	EDistributionInfo info;
+	info = engine->ShowDistributionByParam(1);
 
-   ShowResults("D:\\res.txt", etemp, rows, cols);
+   ShowResults("D:\\res.txt", info);
 
 	delete engine;
 

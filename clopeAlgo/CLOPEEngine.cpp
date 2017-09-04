@@ -52,31 +52,39 @@ void CLOPEEngine::Finalize()
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
-int* CLOPEEngine::ShowDistributionByParam(int i_paramNumber, int& rows, int& cols)
+EDistributionInfo CLOPEEngine::ShowDistributionByParam(int i_paramNumber)
 {
-	int objSize = 0;
 	std::map<char, int> convMap = m_transactionStreamer->ReplyParamInformation(i_paramNumber);
 
-	int* o_distr = new int[(m_clusters.size() + 1) * (objSize + 1)];
-   for (int j = 0; j < objSize; ++j)
-   {
-      o_distr[j] = objs[j];
-   }
+	int mapSize = convMap.size();
+	EDistributionInfo resInfo;
+	resInfo.names.reserve(mapSize);
+	resInfo.distribution.reserve( m_clusters.size() * (mapSize + 1) );
 
-	for (int i = 0; i < m_clusters.size(); ++i)
+	std::vector<int> objs;
+	for (auto it = convMap.begin(); it != convMap.end(); ++it)
 	{
-		int numberOfTransactions = m_clusters[i].m_transactionCounter;
-		for (int j = 0; j < objSize; ++j)
-		{
-			o_distr[(objSize+1) * (i + 1) + j] = m_clusters[i].Occ[objs[j]];
-			numberOfTransactions -= m_clusters[i].Occ[objs[j]];
-		}
-		o_distr[(objSize + 1) * (i + 1) + objSize] = numberOfTransactions;
+		std::string temp(1, it->first);
+		resInfo.names.push_back(temp);
+
+		objs.push_back(it->second);
 	}
 
-   rows = m_clusters.size() + 1;
-   cols = objSize + 1;
-   return o_distr;
+	int clustersSize = m_clusters.size();
+	for (int i = 0; i < clustersSize; ++i)
+	{
+		int numberOfTransactions = m_clusters[i].m_transactionCounter;
+		for (int j = 0; j < mapSize; ++j)
+		{
+			resInfo.distribution.push_back(m_clusters[i].Occ[objs[j]]);
+			numberOfTransactions -= m_clusters[i].Occ[objs[j]];
+		}
+		resInfo.distribution.push_back(numberOfTransactions);
+	}
+
+	resInfo.rows = clustersSize;
+	resInfo.cols = mapSize + 1;
+   return resInfo;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
