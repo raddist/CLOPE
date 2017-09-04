@@ -4,21 +4,18 @@
 #include <algorithm>
 #include <cstring>
 #include <map>
-#include "test42.h"
 #include "txtStreamer.h"
-
-#pragma warning( disable: 4700)
 
 CLOPEEngine::CLOPEEngine(char* i_fileName, double i_r, char* i_ruleName)
 {
-	if (!strcmp(i_fileName, "42"))
-	{
-		m_transactionStreamer = new TestStreamer();
-		m_R = 2.0;
-	}
-
 	m_transactionStreamer = new TxtStreamer(i_fileName, i_ruleName);
 	m_R = i_r;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////
+CLOPEEngine::~CLOPEEngine()
+{
+	delete m_transactionStreamer;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -42,13 +39,13 @@ void CLOPEEngine::StartClusterization()
 	}
 
 	removeEmptyClusters();
-	m_transactionStreamer->RemoveCINFromFile();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 void CLOPEEngine::Finalize()
 {
 	m_transactionStreamer->CloseStream();
+	m_transactionStreamer->RemoveCINFromFile();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -112,6 +109,7 @@ void CLOPEEngine::doFirstIteration()
 
 		m_transactionCounter++;
 	}
+	delete curTransaction;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////

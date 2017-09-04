@@ -17,7 +17,7 @@ CTransaction::~CTransaction()
 }
 
 //////////////////////////////////////////////////////////////////////////
-void CTransaction::FillTransaction(int* i_startPtr, int i_size)
+void CTransaction::FillTransaction(int* i_startPtr, int i_size, int i_class)
 {
 	if (i_size != m_len)
 	{
@@ -30,4 +30,6 @@ void CTransaction::FillTransaction(int* i_startPtr, int i_size)
 	{
 		m_objects[i] = i_startPtr[i];
 	}
+
+	m_class = i_class;
 }

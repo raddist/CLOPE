@@ -36,9 +36,6 @@
     <ClInclude Include="IODataStreamer.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="test42.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
     <ClInclude Include="txtStreamer.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>

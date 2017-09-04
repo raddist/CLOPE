@@ -123,6 +123,9 @@ void CCluster::AddTransaction(const CTransaction& i_transactionToAdd)
 
 	// change number of containing transactions
 	m_transactionCounter++;
+
+	// insert class information
+	Occ[i_transactionToAdd.m_class] += 1;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -145,6 +148,9 @@ void CCluster::RemoveTransaction(const CTransaction& i_transactionToRemove)
 	// change sq
 	m_s -= i_transactionToRemove.m_len;
 
-	// change numver of containing transactions
+	// change number of containing transactions
 	m_transactionCounter--;
+
+	// insert class information
+	Occ[i_transactionToRemove.m_class] -= 1;
 };

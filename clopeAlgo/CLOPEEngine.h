@@ -18,7 +18,7 @@ class CLOPEEngine
 public:
 	CLOPEEngine(char* i_fileName, double i_r, char* i_ruleName);
 
-	~CLOPEEngine() {};
+	~CLOPEEngine();
 
 	bool Initialize();
 

@@ -20,7 +20,8 @@ namespace
 
       for (int i = 0; i < info.rows; ++i)
       {
-         strRow = std::to_string(i) + "\t";
+		  out << "\n";
+         strRow = std::to_string(i + 1) + "\t";
 
          for (int j = 0; j < info.cols; ++j)
          {
@@ -44,13 +45,12 @@ int main(int* argc, char* argv[])
 
 	engine->StartClusterization();
 
-	engine->Finalize();
-
 	EDistributionInfo info;
 	info = engine->ShowDistributionByParam(1);
 
    ShowResults("D:\\res.txt", info);
 
+   engine->Finalize();
 	delete engine;
 
     return 0;

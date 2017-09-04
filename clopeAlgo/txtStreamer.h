@@ -54,19 +54,21 @@ public:
       if (std::getline(m_in, strTransaction))
       {
 		  std::string convertedStr = convertTransactionString(strTransaction);
+		  std::stringstream inputStream(convertedStr);
+
          int* temp = new int[(convertedStr.size() + 1) / 2.0];
          const char* t = " ";
          int ind = 0;
+		 int trClass = -1;
+		 int tempInteger = -1;
 
-         for (auto it = convertedStr.begin(); it < convertedStr.end(); ++it)
-         {
-            if (*it != *t)
-            {
-               temp[ind++] = *it - '0';
-            }
-         }
+		 inputStream >> trClass;
+		 while (inputStream >> tempInteger)
+		 {
+			 temp[ind++] = tempInteger;
+		 }
 
-         o_transaction.FillTransaction(temp, ind);
+         o_transaction.FillTransaction(temp, ind, trClass);
 
          if (m_readCIN)
          {
@@ -84,6 +86,7 @@ public:
             o_transaction.m_clusterOwner = -1;
          }
 
+		 delete[] temp;
          return true;
       }
 
@@ -152,35 +155,69 @@ public:
    private:
    bool readRule(std::string)
    {
-	   m_delimiter = ',';
-	   m_unknown = '?';
+	   std::ifstream in(m_ruleName);
+	   std::string line;
+	   int paramsNumber = 0;
+
+	   // read delimiter symbol
+	   if (!std::getline(in, line))
+	   {
+		   in.close();
+		   return false;
+	   }
+
+	   int found = line.find("delimiter");
+	   if (found != std::string::npos)
+	   {
+		   found = line.find('"');
+		   m_delimiter = line[found + 1];
+	   }
+
+	   // read 'unknown' symbol
+	   std::getline(in, line);
+
+	   found = line.find("unknown");
+	   if (found != std::string::npos)
+	   {
+		   found = line.find('"');
+		   m_unknown = line[found + 1];
+	   }
+
+	   // read param information
+	   std::getline(in, line);
+
+	   found = line.find("nparams");
+	   if (found != std::string::npos)
+	   {
+		   found = line.find('"');
+		   size_t foundEnd = line.find('"', found + 1);
+
+		   paramsNumber = std::stoi(line.substr(found + 1, foundEnd - found - 1));
+	   }
 
 	   int ind = 0;
-
+	   int tempInt = 0;
 	   std::map<char, int> tempMap;
-	   tempMap.insert(std::make_pair('1', ind++));
-	   tempMap.insert(std::make_pair('3', ind++));
-	   m_map.push_back(tempMap);
-	   tempMap.clear();
 
-	   tempMap.insert(std::make_pair('0', ind++));
-	   m_map.push_back(tempMap);
-	   tempMap.clear();
+	   for (int i = 0; i < paramsNumber; ++i)
+	   {
+		   std::getline(in, line);
 
-	   tempMap.insert(std::make_pair('2', ind++));
-	   m_map.push_back(tempMap);
-	   tempMap.clear();
+		   for (int j = 0; j < line.size(); ++j)
+		   {
+			   if (line[j] != ' ')
+			   {
+				   tempMap.insert(std::make_pair(line[j], ind++));
+			   }
+		   }
 
-	   tempMap.insert(std::make_pair('4', ind++));
-	   m_map.push_back(tempMap);
-	   tempMap.clear();
-
-	   tempMap.insert(std::make_pair('5', ind++));
-	   m_map.push_back(tempMap);
-	   tempMap.clear();
-
+		   m_map.push_back(tempMap);
+		   tempMap.clear();
+	   }
+	   
 	   m_difObj = ind;
 
+	   in.close();
 	   return true;
    }
 
