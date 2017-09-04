@@ -2,162 +2,164 @@
 
 #include "IODataStreamer.h"
 #include "transactionImpl.h"
+#include "converter.h"
 
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
+#include <sstream>
 
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <stdlib.h>
-
-
+///////////////////////////////////////////////////////////////////////////////////////////
 class TxtStreamer : public IODataStreamer
 {
 public:
-	TxtStreamer(char* i_fileName)
-		: m_inFileName(i_fileName)
-	{
-		makeCinFileNames(i_fileName);
-	};
+   TxtStreamer(char* i_fileName, char* i_ruleName)
+      : m_inFileName(i_fileName)
+   {
+	   m_converter.ReadRule(i_ruleName);
+      makeCinFileNames(i_fileName);
+   };
 
-	~TxtStreamer() {};
+   ~TxtStreamer() {};
 
-	virtual bool OpenStream()
-	{
-		m_in.open(m_inFileName, std::ios::in | std::ios::out);
-		m_out_cin.open(m_cinFileName1, std::ios::out);
+   virtual bool OpenStream()
+   {
+      m_in.open(m_inFileName, std::ios::in | std::ios::out);
+      m_out_cin.open(m_cinFileName1, std::ios::out);
 
-		if (!m_in)
-		{
-			std::cout << "Can't open input file";
-			return false;
-		}
+      if (!m_in)
+      {
+         std::cout << "Can't open input file";
+         return false;
+      }
 
-		return true;
-	};
+      return true;
+   };
 
-	virtual bool CloseStream()
-	{
-		m_in.close();
-		m_in_cin.close();
-		m_out_cin.close();
+   ///////////////////////////////////////////////////////////////////////////////////////////
+   virtual bool CloseStream()
+   {
+      m_in.close();
+      m_in_cin.close();
+      m_out_cin.close();
 
-		return true;
-	};
+      return true;
+   };
 
-	virtual bool ReadTransaction(CTransaction& o_transaction)
-	{
-		std::string strTransaction;
-		if (std::getline(m_in, strTransaction))
-		{
-			int* temp = new int[(strTransaction.size() + 1) / 2.0];
-			const char* t = " ";
-			int ind = 0;
+   ///////////////////////////////////////////////////////////////////////////////////////////
+   virtual bool ReadTransaction(CTransaction& o_transaction)
+   {
+      std::string strTransaction;
+      if (std::getline(m_in, strTransaction))
+      {
+		  std::string convertedStr = m_converter.ConvertTransactionString(strTransaction);
+         int* temp = new int[(convertedStr.size() + 1) / 2.0];
+         const char* t = " ";
+         int ind = 0;
 
-			for (auto it = strTransaction.begin(); it < strTransaction.end(); ++it)
-			{
-				if (*it != *t)
-				{
-					temp[ind++] = *it - '0';
-				}
-			}
+         for (auto it = convertedStr.begin(); it < convertedStr.end(); ++it)
+         {
+            if (*it != *t)
+            {
+               temp[ind++] = *it - '0';
+            }
+         }
 
-			o_transaction.FillTransaction(temp, ind);
+         o_transaction.FillTransaction(temp, ind);
 
-			if (m_readCIN)
-			{
-				if (std::getline(m_in_cin, strTransaction))
-				{
-					o_transaction.m_clusterOwner = strTransaction[0] - '0';
-				}
-				else
-				{
-					// error
-				}
-			}
-			else
-			{
-				o_transaction.m_clusterOwner = -1;
-			}
+         if (m_readCIN)
+         {
+            if (std::getline(m_in_cin, convertedStr))
+            {
+               o_transaction.m_clusterOwner = convertedStr[0] - '0';
+            }
+            else
+            {
+               // error
+            }
+         }
+         else
+         {
+            o_transaction.m_clusterOwner = -1;
+         }
 
-			return true;
-		}
+         return true;
+      }
 
-		return false;
-	}
+      return false;
+   }
 
-	virtual void AppendCINToTransaction(int i_CIN)
-	{
-		m_out_cin << i_CIN << "\n";
-	}
+   ///////////////////////////////////////////////////////////////////////////////////////////
+   virtual void AppendCINToTransaction(int i_CIN)
+   {
+      m_out_cin << i_CIN << "\n";
+   }
 
-	virtual void goToTheStreamStart()
-	{
-		m_in.clear();
-		m_in.seekg(0);
+   ///////////////////////////////////////////////////////////////////////////////////////////
+   virtual void goToTheStreamStart()
+   {
+      m_in.clear();
+      m_in.seekg(0);
 
-		// close temp files
-		m_in_cin.close();
-		m_out_cin.close();
+      // close temp files
+      m_in_cin.close();
+      m_out_cin.close();
 
-		if (doSwitchOutToCIN2)
-		{
-			m_in_cin.open(m_cinFileName1);
-			m_out_cin.open(m_cinFileName2, std::ios::trunc | std::ios::out);
-		}
-		else
-		{
-			m_in_cin.open(m_cinFileName2);
-			m_out_cin.open(m_cinFileName1, std::ios::trunc | std::ios::out);
-		}
+      if (doSwitchOutToCIN2)
+      {
+         m_in_cin.open(m_cinFileName1);
+         m_out_cin.open(m_cinFileName2, std::ios::trunc | std::ios::out);
+      }
+      else
+      {
+         m_in_cin.open(m_cinFileName2);
+         m_out_cin.open(m_cinFileName1, std::ios::trunc | std::ios::out);
+      }
 
-		m_readCIN = true;
-	}
+      m_readCIN = true;
+   }
 
-	virtual void RemoveCINFromFile()
-	{
-		transactionClusters.clear();
-	}
+   ///////////////////////////////////////////////////////////////////////////////////////////
+   virtual void RemoveCINFromFile()
+   {
+      std::remove(m_cinFileName1.c_str());
+      std::remove(m_cinFileName2.c_str());
+   }
 
-	virtual int ReplyAmountOfDifferentArgs()
-	{
-		return 6;
-	}
+   ///////////////////////////////////////////////////////////////////////////////////////////
+   virtual int ReplyAmountOfDifferentArgs()
+   {
+      return m_converter.ReplyAmountOfObjects();
+   }
 
-	virtual int* ReplyParamInformation(int i_param, int& o_size)
-	{
-		if (i_param == 1)
-		{
-			o_size = 2;
+   ///////////////////////////////////////////////////////////////////////////////////////////
+   virtual std::map<std::string, int> ReplyParamInformation(int i_param)
+   {
+	   return m_converter.ReplyParamMap(i_param);
+   }
 
-			int* o_obj = new int[o_size];
-			o_obj[0] = 0;
-			o_obj[1] = 4;
+   ///////////////////////////////////////////////////////////////////////////////////////////
+   void makeCinFileNames(std::string i_baseName)
+   {
+      m_cinFileName1 = i_baseName + "CIN1.txt";
+      m_cinFileName2 = i_baseName + "CIN2.txt";
 
-			return o_obj;
-		}
-	}
+      m_cinFileName1.erase(m_inFileName.size() - 4, 4);
+      m_cinFileName2.erase(m_inFileName.size() - 4, 4);
+   }
 
-	void makeCinFileNames(std::string i_baseName)
-	{
-		m_cinFileName1 = i_baseName + "CIN1.txt";
-		m_cinFileName2 = i_baseName + "CIN2.txt";
+private:
 
-		m_cinFileName1.erase(m_inFileName.size() - 4, 4);
-		m_cinFileName2.erase(m_inFileName.size() - 4, 4);
-	}
+   bool m_readCIN = false;
+   bool doSwitchOutToCIN2 = true;
+   CConverter m_converter;
 
-	bool m_readCIN = false;
-	bool doSwitchOutToCIN2 = true;
+   std::string m_inFileName = "";
+   std::string m_cinFileName1 = "";
+   std::string m_cinFileName2 = "";
 
-	std::string m_inFileName = "";
-	std::string m_cinFileName1 = "";
-	std::string m_cinFileName2 = "";
-
-	std::ifstream m_in_cin;
-	std::ofstream m_out_cin;
-	std::fstream m_in;
+   std::ifstream m_in_cin;
+   std::ofstream m_out_cin;
+   std::fstream m_in;
 };

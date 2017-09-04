@@ -8,7 +8,6 @@ CCluster::CCluster(int objAmount)
 , m_occMaxSize( objAmount )
 {
 	Occ = new int[objAmount];
-	std::cout << "new" << std::endl;
 	for (int i = 0; i < m_occMaxSize; ++i)
 	{
 		Occ[i] = 0;
@@ -56,7 +55,6 @@ CCluster::CCluster(const CCluster& i_other)
 ///////////////////////////////////////////////////////////////////////////////////////////
 CCluster::~CCluster()
 {
-	std::cout << "release" << std::endl;
 	delete[] Occ;
 };
 

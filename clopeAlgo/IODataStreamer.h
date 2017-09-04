@@ -1,4 +1,6 @@
 #pragma once
+#include <map>
+#include <string>
 
 class IODataStreamer
 {
@@ -17,5 +19,5 @@ public:
 
 	virtual int ReplyAmountOfDifferentArgs() = 0;
 
-	virtual int* ReplyParamInformation(int i_param, int& o_size) = 0;
+	virtual std::map<std::string, int> ReplyParamInformation(int i_param) = 0;
 };

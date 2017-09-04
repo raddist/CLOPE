@@ -9,7 +9,7 @@ class IODataStreamer;
 class CLOPEEngine
 {
 public:
-	CLOPEEngine(char* i_fileName, double i_r);
+	CLOPEEngine(char* i_fileName, double i_r, char* i_ruleName);
 
 	~CLOPEEngine() {};
 
@@ -17,7 +17,7 @@ public:
 
 	void StartClusterization();
 
-	void ShowDistributionByParam(int i_paramumber, int* o_distr);
+   int* ShowDistributionByParam(int i_paramNumber, int& rows, int& cols);
 
 	void Finalize();
 

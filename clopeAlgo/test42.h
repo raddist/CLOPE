@@ -6,11 +6,11 @@
 
 namespace 
 {
-	int sc_transaction_1[2] = { 1, 2 };
-	int sc_transaction_2[3] = { 1, 2, 3 };
-	int sc_transaction_3[3] = { 1, 3, 4 };
-	int sc_transaction_4[2] = { 4, 5 };
-	int sc_transaction_5[3] = { 4, 5, 6 };
+	int sc_transaction_1[2] = { 0, 1 };
+	int sc_transaction_2[3] = { 0, 1, 2 };
+	int sc_transaction_3[3] = { 0, 2, 3 };
+	int sc_transaction_4[2] = { 3, 4 };
+	int sc_transaction_5[3] = { 3, 4, 5 };
 
 	std::vector<std::pair<int*, int>> transactions = {
 		std::make_pair(sc_transaction_1, 2),
@@ -73,7 +73,11 @@ public:
 		return 6;
 	}
 
-	virtual int* ReplyParamInformation(int i_param, int& o_size) { return NULL; };
+	virtual std::map<std::string, int> ReplyParamInformation(int i_param) 
+	{  
+		std::map<std::string, int> res;
+		return res;
+	};
 
 	int m_ptr;
 };
